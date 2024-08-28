@@ -1,0 +1,6 @@
+{
+"name" : "BDR-entry24", 
+"nameSpace": "fem2s11-edca-integration-staging-precodereview", 
+"clusterName": "hoff135", 
+"accessEndpoints":["eric-oss-dmaap.fem2s11-edca-integration-staging-precodereview:9092/catalog-data"]
+}

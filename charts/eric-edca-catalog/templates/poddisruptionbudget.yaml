@@ -1,0 +1,30 @@
+#
+# COPYRIGHT Ericsson 2020
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "eric-edca-catalog.fullname" . }}
+  labels:
+{{- include "eric-edca-catalog.labels" . | nindent 4 }}
+{{- include "eric-edca-catalog.user-labels" . | indent 4 }}
+  annotations:
+{{- include "eric-edca-catalog.product-info" . | nindent 4 }}
+spec:
+  minAvailable : 50%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eric-edca-catalog.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}

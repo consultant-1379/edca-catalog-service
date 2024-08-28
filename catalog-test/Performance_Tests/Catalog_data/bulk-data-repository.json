@@ -1,0 +1,6 @@
+{
+    "name": "bdr",
+    "clusterName": "KaaS",
+    "nameSpace": "sunshine-harii",
+    "accessEndpoints": ["eric-data-object-storage-mn.sunshine-harii:9000"]
+}

@@ -1,0 +1,654 @@
+restapi:
+  - baseUrl: http://eric-edca-catalog.${namespace}:9590/catalog/v1
+    testcases:
+      # Post Negative Dataspace Testcases
+      - testcase : "Catalog_Service_01_POST - Verify POST for registering the Dataspace details when dataspace already exists"
+        doc : "This test is to verify unsuccessful POST operation for registering the Dataspace details when dataspace already exists in DB(postgreSQL)"
+        url: "/data-space"
+        requestBody:  { "name" : "4G" }
+        expectedStatusCode: 409
+        restcall : post
+        expectedResponse : {"message": " Resource exists already"}
+      - testcase : "Catalog_Service_02_POST - Verify POST with mandatory param name missing to create a dataspace"
+        doc : "This test is to verify unsuccessful POST operation for registering the Dataspace details where mandatory param(name) is missing in DB(postgreSQL)"
+        url : "/data-space"
+        requestBody : {}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values - Missing field(s)name"}
+      # Post Negative DataProviderType Testcases
+      - testcase : "Catalog_Service_01_POST - Verify POST for registering the DataProviderType details when dataProviderType already exists"
+        doc : "This test is to verify unsuccessful POST operation for registering the dataProviderType details when dataspace already exists in DB(postgreSQL)"
+        url : "/data-provider-type"
+        requestBody : {"providerVersion": "pver1", "dataCategory": "CM_EXPORT", "providerTypeId": "pvid_1", "dataSpaceId": 1 }
+        expectedStatusCode : 409
+        restcall : post
+        expectedResponse : {"message": " Resource exists already"}
+      - testcase : "Catalog_Service_02_POST - Verify POST with mandatory params missing to create a dataProviderType"
+        doc : "This test is to verify unsuccessful POST operation for registering the DataProviderType details where mandatory params are missing in DB(postgreSQL)"
+        url : "/data-provider-type"
+        requestBody : {"providerVersion": "pver1", "dataCategory": "CM_EXPORT", "providerTypeId": "pvid_1", "dataSpaceId": 2 }
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "dataSpace not found for dataProviderType"}
+      - testcase : "Catalog_Service_03_POST - Verify POST with non existent dataSpace to create a dataProviderType"
+        doc : "This test is to verify unsuccessful POST operation for registering the DataProviderType details where provided dataSpace does not exist in DB(postgreSQL)"
+        url : "/data-provider-type"
+        requestBody : {}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values - Missing field(s)[dataSpaceId, providerVersion, dataCategory, providerTypeId]"}
+      # POST Negative Message Bus Testcases
+      - testcase : "Catalog_Service_01_POST - verify unsuccessful operation of POST Message Bus with one mandatory field missing(without name field)"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB with one mandatory field missing(without name field) present in request body"
+        url : "/message-bus"
+        requestBody : {"clusterName":"clusterName2","nameSpace":"nameSpace2","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[name is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_02_POST - verify unsuccessful operation of POST Message Bus with one mandatory field missing(without clusterName field)"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with one mandatory field missing(without clusterName field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","nameSpace":"nameSpace2","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[clusterName is a mandatory field in MessageBus]"}
+      - testcase : "Catalog_Service_03_POST - verify unsuccessful operation of POST Message Bus with one mandatory field missing(without nameSpace field)"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with one mandatory field missing(without nameSpace field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","clusterName":"clusterName2","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[nameSpace is a mandatory field in MessageBus]"}
+      - testcase : "Catalog_Service_04_POST - verify unsuccessful operation of POST Message Bus with one mandatory field missing(without accesEndpoints field)"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with one mandatory field missing(without accesEndpoints field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","clusterName":"clusterName2","nameSpace":"nameSpace2","notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[accessEndpoints is a mandatory field in MessageBus]"}
+      - testcase : "Catalog_Service_05_POST - verify unsuccessful operation of POST Message Bus with all mandatory fields missing(without name and messageBusId)"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with all mandatory fields missing(without name and messageBusId) in request body"
+        url : "/message-bus"
+        requestBody : {"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        #expectedResponse : {"message": "[clusterName is a mandatory field in MessageBus, accessEndpoints is a mandatory field in MessageBus, name is a mandatory field which should not be empty, nameSpace is a mandatory field in MessageBus]"}
+      - testcase : "Catalog_Service_06_POST - verify unsuccessful operation of POST Message Bus with existing Message Bus details"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with existing Message Bus details in the request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus100","clusterName":"clusterName1","nameSpace":"nameSpace1","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 409
+        restcall : post
+        expectedResponse : {"message": " Resource exists already"}
+      - testcase : "Catalog_Service_07_POST - verify unsuccessful operation of POST Message Bus with non-acceptable values(numeric values) in clusterName field"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with non-acceptable values(numeric values in 'clusterName' field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus1","clusterName":1,"nameSpace":"nameSpace2","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_08_POST - verify unsuccessful operation of POST Message Bus with non-acceptable values(numeric values) in name field"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with non-acceptable values(numeric values in 'name' field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":2,"clusterName":"clusterName2","nameSpace":"nameSpace2","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_09_POST - verify unsuccessful operation of POST Message Bus with non-acceptable values(numeric values) in nameSpace field"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with non-acceptable values(numeric values in 'nameSpace' field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","clusterName":"clusterName2","nameSpace":2,"accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_10_POST verify unsuccessful operation of POST Message Bus with non-acceptable values in accessEndpoints field"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with non-acceptable values(numeric values in 'accessEndpoints' field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","clusterName":"clusterName2","nameSpace":"nameSpace2","accessEndpoints":"ac1","notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_11_POST verify unsuccessful operation of POST Message Bus with empty request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with empty request body"
+        url : "/message-bus"
+        requestBody :
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_12_POST verify unsuccessful operation of POST Message Bus with empty request values(name field) in request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with empty request values(name field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"","clusterName":"clusterName2","nameSpace":"nameSpace2","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[name is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_13_POST verify unsuccessful operation of POST Message Bus with empty request values(clusterName field) in request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with empty request values(clusterName field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","clusterName":"","nameSpace":"nameSpace2","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[clusterName is a mandatory field in MessageBus]"}
+      - testcase : "Catalog_Service_14_POST verify unsuccessful operation of POST Message Bus with empty request values(nameSpace field) in request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with empty request values(nameSpace field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","clusterName":"clusterName2","nameSpace":"","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[nameSpace is a mandatory field in MessageBus]"}
+      - testcase : "Catalog_Service_15_POST verify unsuccessful operation of POST Message Bus with empty request values(nameSpace field) in request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Message Bus detail in DB(postgreSQL) with empty request values(nameSpace field) in request body"
+        url : "/message-bus"
+        requestBody : {"name":"messageBus2","clusterName":"clusterName2","nameSpace":"nameSpace2","accessEndpoints":"","notificationTopicIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      # Post Negative BDR Testcases
+      - testcase : "Catalog_Service_01_POST verify unsuccessful operation of POST BDR with one mandatory field missing(without nameSpace field)"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB with one mandatory field missing(without nameSpace field) present in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":"Kaas","name":"catalogbdr"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[nameSpace is a mandatory field in BulkDataRepository]"}
+      - testcase : "Catalog_Service_02_POST verify unsuccessful operation of POST BDR with one mandatory field missing(without name field)"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL)  with one mandatory field missing(without name field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":"Kaas"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[name is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_03_POST verify unsuccessful operation of POST BDR with one mandatory field missing(without clusterName field)"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with one mandatory field missing(without clusteName field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"name":"catalogbdr"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[clusterName is a mandatory field in BulkDataRepository]"}
+      - testcase : "Catalog_Service_04_POST verify unsuccessful operation of POST BDR with one mandatory field missing(without accessEndPoints field)"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with one mandatory field missing(without accessEndpoints field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","clusterName":"Kaas","name":"catalogbdr"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[accessEndpoints is a mandatory field in BulkDataRepository]"}
+      - testcase : "Catalog_Service_05_POST verify unsuccessful operation of POST BDR with existing BDR details"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with existing BDR details in the request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":"Kaas","name":"catalogbdr"}
+        expectedStatusCode : 409
+        restcall : post
+        expectedResponse : {"message": " Resource exists already"}
+      - testcase : "Catalog_Service_06_POST verify unsuccessful operation of POST BDR with non-acceptable values(numeric values) in name field"
+        doc : " This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with non-acceptable values(numeric values in 'name' field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":"Kaas","name":1234}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_07_POST verify unsuccessful operation of POST BDR with non-acceptable values(numeric values) in nameSpace field"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with non-acceptable values(numeric values in 'nameSpace' field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":1.5,"accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":"Kaas","name":"catalogbdr"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_08_POST verify unsuccessful operation of POST BDR with non-acceptable values(numeric values) in clusterName field"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with non-acceptable values(numeric values in 'clusterName' field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":1.5,"name":"catalogbdr"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_09_POST verify unsuccessful operation of POST BDR with non-acceptable values(numeric values) in accessEndpoints field"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with non-acceptable values(numeric values in 'accessEndpoints' field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092",1.545],"clusterName":"Kaas","name":"catalogbdr"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_10_POST verify unsuccessful operation of POST BDR with empty request body"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with empty request body"
+        url : "/bulk-data-repository"
+        requestBody :
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_11_POST verify unsuccessful operation of POST BDR with empty request values(name field) in request body"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with empty request values(name field) in request body"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":"Kaas","name":""}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[name is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_12_POST verify unsuccessful operation of POST BDR with unknown fields(nameSpaces non-existing field)"
+        doc : "This test is to verify unsuccessful POST operation in storing BDR detail in DB(postgreSQL) with unknown property/field in request body(nameSpaces)"
+        url : "/bulk-data-repository"
+        requestBody : {"nameSpaces":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint2:9092"],"clusterName":"Kaas","name":"catalogbdr"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "nameSpaces is not a valid field "}
+      # POST Negative Notification Topic testcases
+      - testcase : "Catalog_Service_01_POST verify unsuccessful operation of POST Notification Topic with one mandatory field missing(without name field)"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB with one mandatory field missing(without name field) present in request body"
+        url : "/notification-topic"
+        requestBody : {"messageBusId":1,"encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[name is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_02_POST verify unsuccessful operation of POST Notification Topic with one mandatory field missing(without messageBusId field)"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with one mandatory field missing(without messageBusId field) in request body"
+        url : "/notification-topic"
+        requestBody : {"name":"topic1","encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[messageBusId is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_03_POST verify unsuccessful operation of POST Notification Topic with all mandatory fields missing(without name and messageBusId)"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with all mandatory fields missing(without name and messageBusId) in request body"
+        url : "/notification-topic"
+        requestBody : {"encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[messageBusId is a mandatory field which should not be empty, name is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_04_POST verify unsuccessful operation of POST Notification Topic with existing Notification Topic details"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with existing Notification Topic details in the request body"
+        url : "/notification-topic"
+        requestBody : {"messageBusId":1,"name":"topic1","encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 409
+        restcall : post
+        expectedResponse : {"message": " Resource exists already"}
+      - testcase : "Catalog_Service_05_POST verify unsuccessful operation of POST Notification Topic with non-acceptable values(numeric values) in name field"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with non-acceptable values(numeric values in 'name' field) in request body"
+        url : "/notification-topic"
+        requestBody : {"messageBusId":1,"name":12,"encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_06_POST verify unsuccessful operation of POST Notification Topic with non-acceptable values(non-numeric values) in messageBusId field"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with non-acceptable values(non-numeric values in 'messageBusId' field) in request body"
+        url : "/notification-topic"
+        requestBody : {"messageBusId":"messageBus1","name":"topic1","encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_07_POST verify unsuccessful operation of POST Notification Topic with empty request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with empty request body"
+        url : "/notification-topic"
+        requestBody :
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_08_POST verify unsuccessful operation of POST Notification Topic with empty request values(name field) in request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with empty request values(name field) in request body"
+        url : "/notification-topic"
+        requestBody : {"messageBusId":1,"name":"","encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[name is a mandatory field which should not be empty]"}
+      - testcase : "Catalog_Service_09_POST verify unsuccessful operation of POST Notification Topic with empty request values(messageBusId field) in request body"
+        doc : "This test is to verify unsuccessful POST operation in storing Notification Topic detail in DB(postgreSQL) with empty request values(name field) in request body"
+        url : "/notification-topic"
+        requestBody : {"messageBusId":"","name":"topic1","encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "[messageBusId is a mandatory field which should not be empty]"}
+      # POST Negative DataCollector Testcases
+      - testcase : "Catalog_Service_01_POST - Verify POST for registering the DataCollector details when dataCollector already exists"
+        doc : "This test is to verify unsuccessful POST operation for registering the DataCollector details when dataCollector already exists in DB(postgreSQL)"
+        url : "/data-collector"
+        requestBody : {"collectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f10", "controlEndpoint": "http://8.8.8.8:9090/end_point", "name": "dc_1"}
+        expectedStatusCode : 409
+        restcall : post
+        expectedResponse : {"message": " Resource exists already"}
+      - testcase : "Catalog_Service_02_POST - Verify POST with mandatory params missing to create a dataCollector"
+        doc : "This test is to verify unsuccessful POST operation for registering the DataCollector details where mandatory params is missing in DB(postgreSQL)"
+        url : "/data-collector"
+        requestBody : {}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values - Missing field(s)[controlEndpoint, name, collectorId]"}
+      - testcase : "Catalog_Service_03_POST - Verify POST for registering the DataCollector details when collectorId is not of UUID spec formats"
+        doc : "This test is to verify unsuccessful POST operation for registering the DataCollector details when collectorId is not of UUID spec formats in DB(postgreSQL)"
+        url : "/data-collector"
+        requestBody : {"collectorId": "$d65f5310-1593-4ae1-9f1d-ab9104180f10", "controlEndpoint": "http://8.8.8.8:9090/end_point", "name": "dc_1"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_04_POST - Verify POST for registering the DataCollector details when controlEndpoint is not of URL spec formats"
+        doc : "This test is to verify unsuccessful POST operation for registering the DataCollector details when controlEndpoint is not of URL spec formats in DB(postgreSQL)"
+        url : "/data-collector"
+        requestBody : {"collectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f10", "controlEndpoint": "8.8.8.8:9090/end_point", "name": "dc_1"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      # POST Negative FileFormat Testcases
+      - testcase : "Catalog_Service_01_POST - Verify POST for registering the DataProviderType details when fileFormat already exists"
+        doc : "This test is to verify unsuccessful POST operation for registering the dataProviderType details when fileformat already exists in DB(postgreSQL)"
+        url : "/file-format"
+        requestBody : { "dataProviderTypeId": 1, "reportOutputPeriodList": [15], "dataEncoding": "XML", "specificationReference": "", "notificationTopicId": 1, "bulkDataRepositoryId": 1, "dataCollectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f10"}
+        expectedStatusCode : 409
+        restcall : post
+        expectedResponse : {"message": " Resource exists already"}
+      - testcase : "Catalog_Service_02_POST - Verify POST with mandatory params missing to create a dataProviderType"
+        doc : "This test is to verify unsuccessful POST operation for registering the DataProviderType details where mandatory params are missing in DB(postgreSQL)"
+        url : "/file-format"
+        requestBody :
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_03_POST - Verify POST with non existent dataProviderType to create a fileFormat"
+        doc : "This test is to verify unsuccessful POST operation for registering the FileFormat details where provided dataProviderType does not exist in DB(postgreSQL)"
+        url : "/file-format"
+        requestBody : { "dataProviderTypeId": 2, "reportOutputPeriodList": [15], "dataEncoding": "XML", "specificationReference": "", "notificationTopicId": 1, "bulkDataRepositoryId": 1, "dataCollectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f10"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "dataProviderType not found for fileFormat"}
+      - testcase : "Catalog_Service_04_POST - Verify POST with non existent bulk data repository to create a fileFormat"
+        doc : "This test is to verify unsuccessful POST operation for registering the FileFormat details where provided BDR does not exist in DB(postgreSQL)"
+        url : "/file-format"
+        requestBody : { "dataProviderTypeId": 1, "reportOutputPeriodList": [15], "dataEncoding": "XML", "specificationReference": "", "notificationTopicId": 1, "bulkDataRepositoryId": 2, "dataCollectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f10"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "bulkDataRepository not found for fileFormat"}
+      - testcase : "Catalog_Service_05_POST - Verify POST with non existent data collector to create a fileFormat"
+        doc : "This test is to verify unsuccessful POST operation for registering the FileFormat details where provided data collector does not exist in DB(postgreSQL)"
+        url : "/file-format"
+        requestBody : { "dataProviderTypeId": 1, "reportOutputPeriodList": [15], "dataEncoding": "XML", "specificationReference": "", "notificationTopicId": 1, "bulkDataRepositoryId": 2, "dataCollectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f12"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "dataCollector not found for fileFormat,bulkDataRepository not found for fileFormat"}
+      - testcase : "Catalog_Service_06_POST - Verify POST with invalid collector UUID to create a fileFormat"
+        doc : "This test is to verify unsuccessful POST operation for registering the FileFormat details where provided dataProviderType does not exist in DB(postgreSQL)"
+        url : "/file-format"
+        requestBody : { "dataProviderTypeId": 1, "reportOutputPeriodList": [15], "dataEncoding": "XML", "specificationReference": "", "notificationTopicId": 1, "bulkDataRepositoryId": 1, "dataCollectorId": "$d65f5310-1593-4ae1-9f1d-ab9104180f10"}
+        expectedStatusCode : 400
+        restcall : post
+        expectedResponse : {"message": "Invalid request values"}
+      # Get Negative BDR Details
+      - testcase : "Catalog_Service_01_GET verify unsuccessful operation of GET BDR Details with one queryParam Missing(nameSpace)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with one queryParam Missing(nameSpace)"
+        url : "/bulk-data-repository?name=catalogbdr"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering bulk-data-repository details"}
+      - testcase : "Catalog_Service_02_GET verify unsuccessful operation of GET BDR Details using one queryParam Missing(name)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with one queryParam Missing(name)"
+        url : "/bulk-data-repository?nameSpace=bdr-nameSpace"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering bulk-data-repository details"}
+      - testcase : "Catalog_Service_03_GET verify unsuccessful operation of GET BDR Details using one queryParam value Missing(name)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with one queryParam Missing(name)"
+        url : "/bulk-data-repository?nameSpace=bdr-nameSpace&name="
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering bulk-data-repository details"}
+      - testcase : "Catalog_Service_04_GET verify unsuccessful operation of GET BDR Details using one queryParam value Missing(nameSpace)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with one queryParam Missing(name)"
+        url : "/bulk-data-repository?nameSpace=&name=catalogbdr"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering bulk-data-repository details"}
+      - testcase : "Catalog_Service_05_GET verify unsuccessful operation of GET BDR Details with one queryParam Missing(name) & using unsupported param(clusterName)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with one queryParam Missing(name) & using unsupported param(clusterName)"
+        url : "/bulk-data-repository?nameSpace=bdr-nameSpace&clusterName=Kaas"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering bulk-data-repository details"}
+      - testcase : "Catalog_Service_06_GET verify unsuccessful operation of GET BDR Details with one queryParam Missing(nameSpace) & using unsupported param(clusterName)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with one queryParam Missing(nameSpace) & using unsupported param(clusterName)"
+        url : "/bulk-data-repository?name=bdr-nameSpace&clusterName=Kaas"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering bulk-data-repository details"}
+      - testcase : "Catalog_Service_07_GET verify unsuccessful operation of GET BDR Details using unsupported param(clusterName)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with unsupported param(clusterName)"
+        url : "/bulk-data-repository?clusterName=Kaas"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering bulk-data-repository details"}
+      - testcase : "Catalog_Service_08_GET verify unsuccessful operation of GET BDR Details using non-existing id(BDR Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with non-existing id(BDR Detail)"
+        url : "/bulk-data-repository/101"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_09_GET verify unsuccessful operation of GET BDR Details using unsupported id type(passing as String value)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) using unsupported id type(passing as String value)"
+        url : "/bulk-data-repository/test"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_10_GET verify unsuccessful operation of GET BDR Details using non-existing nameSpace & name params(BDR Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR Details from DB(postgreSQL) with non-existing nameSpace & name params(BDR Detail)"
+        url : "/bulk-data-repository?nameSpace=metadata&name=catalog"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_11_GET verify unsuccessful operation of GET BDR Details using non-existing nameSpace & existing name param(BDR Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored BDR data from DB(postgreSQL) with non-existing nameSpace & with existing name params(BDR Detail)"
+        url : "/bulk-data-repository?nameSpace=catalogNameSpace&name=catalogbdr"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_12_GET verify unsuccessful operation of GET BDR Details with improper URL"
+        doc : "This test is to verify unsuccessful GET operation with improper URL"
+        url : "/bulk--data-repository"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "No handler found for GET /catalog/v1/bulk--data-repository"}
+      - testcase : "Catalog_Service_13_GET verify unsuccessful operation of GET BDR Details with unsupported HTTP Method(PATCH)"
+        doc : "This test is to verify unsuccessful GET operation using unsupported HTTP Method(PATCH)"
+        url : "/bulk-data-repository"
+        expectedStatusCode : 405
+        restcall : patch
+        expectedResponse : {"message": "Request method 'PATCH' not supported"}
+      #Get Negative Dataspace Testcases
+      - testcase : "Catalog_Service_01_GET verify unsuccessful operation of GET Dataspace Details using invalid query params"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using invalid queryParameters"
+        url : "/data-space?unknown_prop=unknown_prop_val_1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Parameter values(name) missing in request"}
+      - testcase : "Catalog_Service_02_GET verify unsuccessful operation of GET Dataspace Details using non-existent queryParams(name)"
+        doc : "This test is to verify successful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using non-existent queryParameters(name)"
+        url : "/data-space?name=non-existent-dataspace-name"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_03_GET verify unsuccessful operation of GET Dataspace Details using non-existent pathParams(id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using non-existent pathParameters (id)"
+        url : "/data-space/1000"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_04_GET verify unsuccessful operation of GET Dataspace Details using invalid non integer pathParams(id)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using non integer pathParameters(id)"
+        url : "/data-space/1000x"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Invalid request values"}
+      #Get Negative FileFormat Testcases
+      - testcase : "Catalog_Service_01_GET verify unsuccessful operation of GET FileFormat Details using invalid query params"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored file format Details from DB(postgreSQL) using invalid queryParameters"
+        url : "/file-format?unknown_prop=unknown_prop_val_1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Parameters(dataProviderType, dataSpace, dataCategory) missing in request or invalid query params"}
+      - testcase : "Catalog_Service_02_GET verify unsuccessful operation of GET Dataspace Details using non-associated queryParams(dataSpace and dataProviderType)"
+        doc : "This test is to verify successful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using non-existent queryParameters(name)"
+        url  : "/file-format?dataSpace=non-existent-dataspace-name&dataProviderType=non-existent-dataprovider-type-id"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : []
+      - testcase : "Catalog_Service_03_GET verify unsuccessful operation of GET FileFormat Details using non-existent pathParams(id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored fileformat Details from DB(postgreSQL) using non-existent pathParameters (id)"
+        url : "/file-format/1000"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_04_GET verify unsuccessful operation of GET FileFormat Details using invalid non integer pathParams(id)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored fileformat Details from DB(postgreSQL) using non integer pathParameters(id)"
+        url : "/file-format/1000x"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_05_GET verify unsuccessful operation of GET FileFormat Details using non-associated queryParams(dataSpace)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored fileformat Details from DB(postgreSQL) using queryParams(dataSpace)"
+        url  : "/file-format?dataSpace=5G"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : []
+      - testcase : "Catalog_Service_06_GET verify unsuccessful operation of GET FileFormat Details using non-associated queryParams(dataSpace and dataCategory)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored fileformat Details from DB(postgreSQL) using queryParams(dataSpace and dataCategory)"
+        url  : "/file-format?dataCategory=PM_STATS&dataSpace=5G"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : []
+      - testcase : "Catalog_Service_07_GET verify unsuccessful operation of GET FileFormat Details using non-associated queryParams(dataCategory)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored fileformat Details from DB(postgreSQL) using queryParams(dataCategory)"
+        url  : "/file-format?dataCategory=PM_STATS"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : []
+      # Get Negative  Message Bus Testcases
+      - testcase : "Catalog_Service_01_GET verify unsuccessful operation of GET Message Bus Details with one queryParam Missing(nameSpace)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) with one queryParam Missing(nameSpace)"
+        url : "/message-bus?name=messageBus1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering Message Bus details"}
+      - testcase : "Catalog_Service_02_GET verify unsuccessful operation of GET Message Bus Details using one queryParam Missing(name)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) with one queryParam Missing(name)"
+        url : "/message-bus?nameSpace=nameSpace1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering Message Bus details"}
+      - testcase :  "Catalog_Service_03_GET verify unsuccessful operation of GET Message Bus Details with one queryParam Missing(name) & using unsupported param(specificationReference)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) with one queryParam Missing(name) & using unsupported param(specificationReference)"
+        url : "/message-bus?nameSpace=nameSpace&specificationReference=specref1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering Message Bus details"}
+      - testcase : "Catalog_Service_04_GET verify unsuccessful operation of GET Message Bus Details with one queryParam Missing(nameSpace) & using unsupported param(specificationReference)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) with one queryParam Missing(nameSpace) & using unsupported param(specificationReference)" 
+        url : "/message-bus?name=messageBus1&specificationReference=specref1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering Message Bus details"}
+      - testcase : "Catalog_Service_05_GET verify unsuccessful operation of GET Message Bus Details using unsupported param(specificationReference)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) with unsupported param(specificationReference)"
+        url : "/message-bus?specificationReference=specref1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only parameters(name & nameSpace) can be used for filtering Message Bus details"}
+      - testcase : "Catalog_Service_06_GET verify unsuccessful operation of GET Message Bus Details using invalid id(id as a string)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) using invalid id(id as a string)"
+        url : "/message-bus/messageBus1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Invalid request values"}
+      - testcase : "Catalog_Service_07_GET verify unsuccessful operation of GET Message Bus Details using non-existing id(Message Bus Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) with non-existing id(Message Bus Detail)"
+        url : "/message-bus/101"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_08_GET verify unsuccessful operation of GET Message Bus Details using existing nameSpace & non-existing name params(Message Bus Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) with non-existing name & nameSpace params(Message Bus Detail)"
+        url : "/message-bus?nameSpace=nameSpace1&name=messageBus101"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_09_GET verify unsuccessful operation of GET Message Bus Details using non-existing nameSpace & existing name param(Message Bus Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Message Bus data from DB(postgreSQL) with non-existing nameSpace & with existing name params(Message Bus Detail)"
+        url : "/message-bus?nameSpace=nameSpace100&name=messageBus1"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_10_GET verify unsuccessful operation of GET Message Bus Details with improper URL"
+        doc : "This test is to verify unsuccessful GET operation with improper URL"
+        url : "/messsage-bus"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "No handler found for GET /catalog/v1/messsage-bus"}
+      - testcase : "Catalog_Service_11_GET verify unsuccessful operation of GET Message Bus Details with unsupported HTTP Method(PATCH)"
+        doc :  "This test is to verify unsuccessful GET operation using unsupported HTTP Method(PATCH)"
+        url : "/message-bus"
+        expectedStatusCode : 405
+        restcall : patch
+        expectedResponse : {"message": "Request method 'PATCH' not supported"}
+      # Get Negative  Notification Topic Testcases
+      - testcase : "Catalog_Service_01_GET verify unsuccessful operation of GET Notification Topic Details with one queryParam Missing(messageBusId)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) with one queryParam Missing(messageBusId)"
+        url : "/notification-topic?name=topic1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only name and messageBusId can be used for filtering"}
+      - testcase : "Catalog_Service_02_GET verify unsuccessful operation of GET Notification Topic Details using one queryParam Missing(name)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) with one queryParam Missing(name)"
+        url : "/notification-topic?messageBusId=1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only name and messageBusId can be used for filtering"}
+      - testcase : "Catalog_Service_03_GET verify unsuccessful operation of GET Notification Topic Details with one queryParam Missing(name) & using unsupported param(specificationReference)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) with one queryParam Missing(name) & using unsupported param(specificationReference)"
+        url : "/notification-topic?messageBusId=1&specificationReference=specref1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only name and messageBusId can be used for filtering"}
+      - testcase : "Catalog_Service_04_GET verify unsuccessful operation of GET Notification Topic Details with one queryParam Missing(messageBusId) & using unsupported param(specificationReference)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) with one queryParam Missing(messageBusId) & using unsupported param(specificationReference)"
+        url : "/notification-topic?name=topic1&specificationReference=specref1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only name and messageBusId can be used for filtering"}
+      - testcase : "Catalog_Service_05_GET verify unsuccessful operation of GET Notification Topic Details using unsupported param(specificationReference)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) with unsupported param(specificationReference)"
+        url : "/notification-topic?specificationReference=specref1"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : {"message": "Only name and messageBusId can be used for filtering"}
+      - testcase : "Catalog_Service_06_GET verify unsuccessful operation of GET Notification Topic Details using invalid messageBusId(messageBus Id as a string)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic data from DB(postgreSQL) using invalid messageBusId(messageBus Id as a string)"
+        url : "/notification-topic?name=topic100&messageBusId=messageBusId"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : { "message": "Invalid request values"}
+      - testcase : "Catalog_Service_07_GET verify unsuccessful operation of GET Notification Topic Details using invalid id(id as a string)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) using invalid id(id as a string)"
+        url : "/notification-topic/abc"
+        expectedStatusCode : 400
+        restcall : get
+        expectedResponse : { "message": "Invalid request values"}
+      - testcase : "Catalog_Service_08_GET verify unsuccessful operation of GET Notification Topic Details using non-existing id(Notification Topic Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) with non-existing id(Notification Topic Detail)"
+        url : "/notification-topic/101"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : { "message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_09_GET verify unsuccessful operation of GET Notification Topic Details using non-existing name & messageBusId params(Notification Topic Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) with non-existing name & messageBusId params(Notification Topic Detail)"
+        url : "/notification-topic?name=topic100&messageBusId=1"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : { "message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_10_GET verify unsuccessful operation of GET Notification Topic Details using existing name & non-existing messageBusId param(Notification Topic Detail)"
+        doc : "This test is to verify unsuccessful GET operation in retrieving the stored Notification Topic data from DB(postgreSQL) with non-existing name & with existing messageBusId params(Notification Topic Detail)"
+        url : "/notification-topic?name=topic1&messageBusId=100"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : { "message": "Requested Resource not found"}
+      - testcase : "Catalog_Service_11_GET verify unsuccessful operation of GET Notification Topic Details with improper URL"
+        doc : "This test is to verify unsuccessful GET operation with improper URL"
+        url : "/notfication-topic"
+        expectedStatusCode : 404
+        restcall : get
+        expectedResponse : {"message": "No handler found for GET /catalog/v1/notfication-topic"}
+      - testcase : "Catalog_Service_12_GET verify unsuccessful operation of GET Notification Topic Details with unsupported HTTP Method(PATCH)"
+        doc : "This test is to verify unsuccessful GET operation using unsupported HTTP Method(PATCH)"
+        url : "/notification-topic"
+        expectedStatusCode : 405
+        restcall : patch
+        expectedResponse : {"message": "Request method 'PATCH' not supported"}

@@ -1,0 +1,34 @@
+server.port: ${SERVER_PORT}
+server.servlet.context-path: /catalog
+spring.mvc.throw-exception-if-no-handler-found: true
+spring.resources.add-mappings: false
+spring.main.banner-mode: off
+management.endpoint.metrics.enabled: true
+management.endpoints.web.exposure.include: health,prometheus
+management.endpoint.prometheus.enabled: true
+management.metrics.export.prometheus.enabled: true
+
+spring.flyway.locations: classpath:db/migration/
+spring.datasource.driverClassName: org.postgresql.Driver
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults: false
+spring.jpa.database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+spring.jpa.hibernate.ddl-auto: validate
+spring.jackson.deserialization.FAIL_ON_UNKNOWN_PROPERTIES: true
+
+hibernate.use_sql_comments: false
+
+# enable graceful shutdown of connector and application context
+server.shutdown: graceful
+# graceful shutdown wait period period for serving in-flight requests
+spring.lifecycle.timeout-per-shutdown-phase: ${GRACEFUL_SHUTDOWN_TIMEOUT:20s}
+
+
+logging:
+  config: ${LOGBACK_CONFIG_FILE:classpath:catalog-logback-json.xml}
+
+
+info.app.name: EDCA-Catalog Service
+info.app.description: Catalog Service to store metadata in Database
+info.app.version: "Version: v1.1.0"
+info.app.legal: COPYRIGHT Ericsson 2020 - The copyright to the computer program(s) herein is the property of Ericsson Inc. The programs may be used and/or copied only with written permission from Ericsson Inc. or in accordance with the terms and conditions stipulated in the agreement/contract under which the program(s) have been supplied.
+

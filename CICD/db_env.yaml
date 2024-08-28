@@ -1,0 +1,24 @@
+global:
+  registry:
+    url: armdocker.rnd.ericsson.se
+    imagePullPolicy: IfNotPresent
+  pullSecret:
+  security:
+    tls:
+      enabled: false
+
+brAgent:
+  enabled: false
+credentials:
+  kubernetesSecretName: "eric-edca-user-creds"
+  keyForUserId: pguserid
+  keyForUserPw: pgpasswd
+  keyForSuperPw: pgpasswd
+  keyForReplicaId: pguserid
+  keyForReplicaPw: pgpasswd
+  keyForMetricsPw: pgpasswd
+postgresDatabase: catalog
+persistentVolumeClaim:
+  storageClassName: "network-block"
+
+nameOverride: eric-edca-catalog-db

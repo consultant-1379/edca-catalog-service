@@ -1,0 +1,449 @@
+modelVersion: '1.1'
+dependencies:
+- ID: org.postgresql:postgresql+42.2.23.jre7
+  additional_info:
+    fossa-attribution:
+      Description: Java JDBC 4.2 (JRE 8+) driver for PostgreSQL database
+      Package: org.postgresql:postgresql
+      Source: mvn
+      Version: 42.2.23.jre7
+      Hash: ''
+      licenses:
+      - BSD-2-Clause
+      - BSD-3-Clause
+      - public-domain
+      Title: PostgreSQL JDBC Driver - JDBC 4.2
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://github.com/pgjdbc/pgjdbc
+    community_name: https://github.com/pgjdbc/pgjdbc
+    community_url: https://github.com/pgjdbc/pgjdbc
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: PostgreSQL JDBC Driver
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 42.2.23.jre7
+    licenses: []
+    src_download_link: https://github.com/pgjdbc/pgjdbc/archive/refs/tags/REL42.2.23.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: org.postgresql_postgresql
+    target_sw: linux
+    vendor: mvn
+    version: 42.2.23.jre7
+    web_url: https://github.com/pgjdbc/pgjdbc
+  licenses:
+  - BSD-2-Clause
+  - BSD-3-Clause
+  - public-domain
+  name: PostgreSQL JDBC Driver - JDBC 4.2
+  primary:
+  - this
+  selected_license: BSD-3-Clause
+  subcomponent: true
+  type: FOSS
+  versions:
+  - 42.2.23.jre7
+- ID: org.springframework.boot:spring-boot-starter-aop+2.4.4
+  additional_info:
+    fossa-attribution:
+      Description: Starter for aspect-oriented programming with Spring AOP and AspectJ
+      Package: org.springframework.boot:spring-boot-starter-aop
+      Source: mvn
+      Version: 2.4.4
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      Title: Spring Boot AOP Starter
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-aop
+    community_name: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-aop
+    community_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-aop
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: Spring Boot, Spring
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 2.4.4
+    licenses: []
+    src_download_link: https://github.com/spring-projects/spring-boot/archive/refs/tags/v2.4.4.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: org.springframework.boot_spring-boot-starter-aop
+    target_sw: linux
+    vendor: mvn
+    version: 2.4.4
+    web_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-aop
+  licenses:
+  - Apache-2.0
+  name: Spring Boot AOP Starter
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: true
+  type: FOSS
+  versions:
+  - 2.4.4
+- ID: org.springframework.boot:spring-boot-starter-actuator+2.4.4
+  additional_info:
+    fossa-attribution:
+      Description: Starter for using Spring Boots Actuator which provides productionready features to help you monitor and manage your application
+      Package: org.springframework.boot:spring-boot-starter-actuator
+      Source: mvn
+      Version: 2.4.4
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      Title: Spring Boot Actuator Starter
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-actuator
+    community_name: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-actuator
+    community_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-actuator
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: Spring Boot, Spring
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 2.4.4
+    licenses: []
+    src_download_link: https://github.com/spring-projects/spring-boot/archive/refs/tags/v2.4.4.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: org.springframework.boot_spring-boot-starter-actuator
+    target_sw: linux
+    vendor: mvn
+    version: 2.4.4
+    web_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-actuator
+  licenses:
+  - Apache-2.0
+  name: Spring Boot Actuator Starter
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: true
+  type: FOSS
+  versions:
+  - 2.4.4
+- ID: org.springframework.boot:spring-boot-starter-data-jpa+2.4.4
+  additional_info:
+    fossa-attribution:
+      Description: Starter for using Spring Data JPA with Hibernate
+      Package: org.springframework.boot:spring-boot-starter-data-jpa
+      Source: mvn
+      Version: 2.4.4
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      Title: Spring Boot Data JPA Starter
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-data-jpa
+    community_name: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-data-jpa
+    community_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-data-jpa
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: Spring Boot, Spring
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 2.4.4
+    licenses: []
+    src_download_link: https://github.com/spring-projects/spring-boot/archive/refs/tags/v2.4.4.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: org.springframework.boot_spring-boot-starter-data-jpa
+    target_sw: linux
+    vendor: mvn
+    version: 2.4.4
+    web_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-data-jpa
+  licenses:
+  - Apache-2.0
+  name: Spring Boot Data JPA Starter
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: true
+  type: FOSS
+  versions:
+  - 2.4.4
+- ID: org.springframework.boot:spring-boot-starter-test+2.4.4
+  additional_info:
+    fossa-attribution:
+      Description: Starter for testing Spring Boot applications with libraries includingJUnit, Hamcrest and Mockito
+      Package: org.springframework.boot:spring-boot-starter-test
+      Source: mvn
+      Version: 2.4.4
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      Title: Spring Boot Test Starter
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-test
+    community_name: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-test
+    community_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-test
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: Spring Boot, Spring
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 2.4.4
+    licenses: []
+    src_download_link: https://github.com/spring-projects/spring-boot/archive/refs/tags/v2.4.4.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: org.springframework.boot_spring-boot-starter-test
+    target_sw: linux
+    vendor: mvn
+    version: 2.4.4
+    web_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-test
+  licenses:
+  - Apache-2.0
+  name: Spring Boot Test Starter
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: true
+  type: FOSS
+  versions:
+  - 2.4.4
+- ID: org.springframework.boot:spring-boot-starter-web+2.4.4
+  additional_info:
+    fossa-attribution:
+      Description: Starter for building web, including RESTful, applications using SpringMVC. Uses Tomcat as the default embedded container
+      Package: org.springframework.boot:spring-boot-starter-web
+      Source: mvn
+      Version: 2.4.4
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      Title: Spring Boot Web Starter
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-web
+    community_name: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-web
+    community_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-web
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: Spring Boot, Spring
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 2.4.4
+    licenses: []
+    src_download_link: https://github.com/spring-projects/spring-boot/archive/refs/tags/v2.4.4.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: org.springframework.boot_spring-boot-starter-web
+    target_sw: linux
+    vendor: mvn
+    version: 2.4.4
+    web_url: https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-web
+  licenses:
+  - Apache-2.0
+  name: Spring Boot Web Starter
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: true
+  type: FOSS
+  versions:
+  - 2.4.4
+- ID: org.flywaydb:flyway-core+7.7.3
+  additional_info:
+    fossa-attribution:
+      Description: The fossa information is fetched from  FOSSA service. Dont Edit!
+      Package: org.flywaydb:flyway-core
+      Source: mvn
+      Version: 7.7.3
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      Title: flyway-core
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://repo1.maven.org/maven2/org/flywaydb/flyway-core
+    community_name: https://repo1.maven.org/maven2/org/flywaydb/flyway-core
+    community_url: https://repo1.maven.org/maven2/org/flywaydb/flyway-core
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: flyway-core
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 7.7.3
+    licenses: []
+    src_download_link: https://github.com/flyway/flyway/archive/refs/tags/flyway-7.7.3.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: org.flywaydb_flyway-core
+    target_sw: linux
+    vendor: mvn
+    version: 7.7.3
+    web_url: https://repo1.maven.org/maven2/org/flywaydb/flyway-core
+  licenses:
+  - Apache-2.0
+  name: flyway-core
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: false
+  type: FOSS
+  versions:
+  - 7.7.3
+- ID: io.micrometer:micrometer-core+1.6.5
+  additional_info:
+    fossa-attribution:
+      Description: Application monitoring instrumentation facade
+      Package: io.micrometer:micrometer-core
+      Source: mvn
+      Version: 1.6.5
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      - MIT
+      Title: micrometer-core
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://github.com/micrometer-metrics/micrometer
+    community_name: https://github.com/micrometer-metrics/micrometer
+    community_url: https://github.com/micrometer-metrics/micrometer
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: Micrometer
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 1.6.5
+    licenses: []
+    src_download_link: https://github.com/micrometer-metrics/micrometer/archive/refs/tags/v1.6.5.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: io.micrometer_micrometer-core
+    target_sw: linux
+    vendor: mvn
+    version: 1.6.5
+    web_url: https://github.com/micrometer-metrics/micrometer
+  licenses:
+  - Apache-2.0
+  - MIT
+  name: micrometer-core
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: false
+  type: FOSS
+  versions:
+  - 1.6.5
+- ID: io.micrometer:micrometer-registry-prometheus+1.6.5
+  additional_info:
+    fossa-attribution:
+      Description: Application monitoring instrumentation facade
+      Package: io.micrometer:micrometer-registry-prometheus
+      Source: mvn
+      Version: 1.6.5
+      Hash: ''
+      licenses:
+      - Apache-2.0
+      Title: micrometer-registry-prometheus
+  bazaar:
+    register: 'yes'
+    prim: ''
+    community_link: https://github.com/micrometer-metrics/micrometer
+    community_name: https://github.com/micrometer-metrics/micrometer
+    community_url: https://github.com/micrometer-metrics/micrometer
+    component_comment: ''
+    component_highlevel_description: ''
+    component_name: Micrometer
+    component_platform: linux
+    component_programing_language: Java
+    component_version: 1.6.5
+    licenses: []
+    src_download_link: https://github.com/micrometer-metrics/micrometer/archive/refs/tags/v1.6.5.zip
+    stako_decision_reason: automatic
+    stako: DO_NOT_EDIT_MANUALLY
+    stako_comment: ''
+    bazaarurl: ''
+  encryptions:
+    used:
+    - ''
+  evms:
+    register: 'yes'
+    product_name: io.micrometer_micrometer-registry-prometheus
+    target_sw: linux
+    vendor: mvn
+    version: 1.6.5
+    web_url: https://github.com/micrometer-metrics/micrometer
+  licenses:
+  - Apache-2.0
+  name: micrometer-registry-prometheus
+  primary:
+  - this
+  selected_license: Apache-2.0
+  subcomponent: true
+  type: FOSS
+  versions:
+  - 1.6.5

@@ -1,0 +1,235 @@
+# Syntax to write test cases
+# restapi: 
+#   - baseUrl: <base-url>*
+#     testcases:
+#       - testcase : <testcase-name>*
+#         doc : <documentation>*
+#         url: <endpoints>*
+#         requestBody: <request-body-json>*   if not leave the request-body value
+#         expectedStatusCode: <expected Response status code>*
+#         restcall : <http-method>*
+#         expectedResponse : <expected response json>(optional)
+
+restapi:
+  - baseUrl: http://eric-edca-catalog.${namespace}:9590/catalog/v1
+    testcases:
+      # Dataspace testcases
+      - testcase : "Catalog_Service_01_POST - Verify POST with valid params to create a dataspace"
+        doc : "This test is to verify successful POST operation for registering the Dataspace details in DB(postgreSQL)"
+        url: "/data-space"
+        requestBody: { "name": "4G" }
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : { "name": "4G" }
+      # DataProviderType testcases
+      - testcase : "Catalog_Service_01_POST - Verify POST with valid params to create a data provider type"
+        doc : "This test is to verify successful POST operation for registering the DataProviderType details in DB(postgreSQL)"
+        url: "/data-provider-type"
+        requestBody: {"providerVersion": "pver1", "dataCategory": "CM_EXPORT", "providerTypeId": "pvid_1", "dataSpaceId": 1 }
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"providerVersion": "pver1", "dataCategory": "CM_EXPORT", "providerTypeId": "pvid_1"}
+      # MessageBus testcases
+      - testcase : "Catalog_Service_01_GET verify successful operation of GET Message Bus Details when no data exists"
+        doc: "This test is to verify successful GET operation in retrieving the Message Bus detail from DB when no data exists"
+        url : "/message-bus"
+        restcall : get
+        expectedStatusCode : 200
+        expectedResponse : []
+      - testcase : "Catalog_Service_02_POST - verify successful operation of POST Message Bus with all fields"
+        doc : "This test is to verify successful POST operation for Message Bus with all details available."
+        url: "/message-bus"
+        requestBody: {"name":"messageBus100","clusterName":"clusterName1","nameSpace":"nameSpace1","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"name":"messageBus100","clusterName":"clusterName1","nameSpace":"nameSpace1","accessEndpoints":["ac1"],"notificationTopicIds":[]}
+      - testcase : "Catalog_Service_03_POST - verify successful operation of POST Message Bus with only mandatory fields"
+        doc : "This test is to verify successful POST operation for Message Bus with only mandatory details available."
+        url: "/message-bus"
+        requestBody: {"name":"messageBus200","clusterName":"clusterName2","nameSpace":"nameSpace2","accessEndpoints":["ac2"]}
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"name":"messageBus200","clusterName":"clusterName2","nameSpace":"nameSpace2","accessEndpoints":["ac2"]}
+      # BDR testcase
+      - testcase : "Catalog_Service_01_GET verify successful operation of GET BDR Details when no data exists"
+        doc : "This test is to verify successful GET operation in retreiving the Bulk Data Repository detail from DB when no data exists"
+        url : "/bulk-data-repository"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : []
+      - testcase : "Catalog_Service_02_POST - verify successful operation of POST BDR with all mandatory fields"
+        doc : "This test is to verify successful POST operation in storing BDR detail in DB keeping mandatory fields(nameSpace,accessEndpoints,clusterName,name) in request body"
+        url: "/bulk-data-repository"
+        requestBody: {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint1:9092"],"clusterName":"Kaas","name":"catalogbdr"}
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"nameSpace":"bdr-nameSpace","accessEndpoints":["eric-oss-dmaap-kafka.edca-sprint1:9092"],"clusterName":"Kaas","name":"catalogbdr"}
+      # Notification Testcases
+      - testcase : "Catalog_Service_01_GET verify successful operation of GET Notification Topic Details when no data exists"
+        doc : "This test is to verify successful GET operation in retreiving the Notification Topic detail from DB when no data exists"
+        url : "/notification-topic"
+        expectedStatusCode : 200
+        expectedResponse : []
+        restcall : get
+      - testcase : "Catalog_Service_02_POST - verify successful operation of POST Notification Topic with all fields" 
+        doc : "This test is to verify successful POST operation for notification topic with all details available."
+        url: "/notification-topic"
+        requestBody: {"messageBusId":1,"name":"topic1","encoding":"JSON","specificationReference":"specref1","fileFormatIds":[]}
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"id": 1,"name":"topic1"}
+      - testcase : "Catalog_Service_03_POST - verify successful operation of POST Notification Topic with only mandatory fields"
+        doc : "This test is to verify successful POST operation for notification topic with only mandatory details available."
+        url: "/notification-topic"
+        requestBody: {"messageBusId":1,"name":"topic2"}
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"id":2,"name":"topic2"}
+      # Data Collector  Testcase
+      - testcase : "Catalog_Service_01_POST - Verify POST with valid params to create a data collector"
+        doc : "This test is to verify successful POST operation for registering the DataCollector details in DB(postgreSQL)"
+        url: "/data-collector"
+        requestBody: {"collectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f10", "controlEndpoint": "http://8.8.8.8:9090/end_point", "name": "dc_1"}
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"controlEndpoint": "http://8.8.8.8:9090/end_point", "name": "dc_1"}
+      # File Format Testcase
+      - testcase : "Catalog_Service_09_POST - Verify POST with valid params to create a file format"
+        doc : "This test is to verify successful POST operation for registering the FileFormat in DB(postgreSQL)"
+        url: "/file-format"
+        requestBody: { "dataProviderTypeId": 1, "reportOutputPeriodList": [15], "dataEncoding": "XML", "specificationReference": "", "notificationTopicId": 1, "bulkDataRepositoryId": 1, "dataCollectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f10"}
+        expectedStatusCode: 201
+        restcall : post
+        expectedResponse : {"id": 1}
+      # BDR Get Testcase
+      - testcase : "Catalog_Service_01_GET - verify successful operation of GET ALL BDR Details"
+        doc : "This test is to verify successful GET operation in retrieving the stored BDR Details from DB(postgreSQL)"
+        url: "/bulk-data-repository"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{'id': 1, 'name': 'catalogbdr', 'clusterName': 'Kaas', 'nameSpace': 'bdr-nameSpace', 'accessEndpoints': ['eric-oss-dmaap-kafka.edca-sprint1:9092'], 'fileFormatIds': [1]}]
+      - testcase : "Catalog_Service_02_GET - verify successful operation of GET BDR Details using queryParams(nameSpace & name)"
+        doc : "This test is to verify successful GET operation in retrieving the stored BDR Details from DB(postgreSQL) using queryParameters (nameSpace & name)"
+        url : "/bulk-data-repository?nameSpace=bdr-nameSpace&name=catalogbdr"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{ "nameSpace": "bdr-nameSpace", "name" : "catalogbdr" }]
+      - testcase : "Catalog_Service_03_GET - verify successful operation of GET BDR Details using PathVariable (id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored BDR Details from DB(postgreSQL) using pathvariable (id)"
+        url : "/bulk-data-repository/1"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : {"id":1}
+      # DataProviderType TestCase
+      - testcase : "Catalog_Service_01_GET verify successful operation of GET All DataProviderType Details"
+        doc : "This test is to verify successful GET operation in retrieving all the stored dataProviderType Details from DB(postgreSQL)"
+        url : "/data-provider-type"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse :  [{"id":1,"dataCategory": "CM_EXPORT","providerTypeId": "pvid_1"}]
+      - testcase : "Catalog_Service_02_GET verify successful operation of GET DataProviderType Details using queryParams(dataSpace)"
+        doc : "This test is to verify successful GET operation in retrieving the stored dataProviderType Details from DB(postgreSQL) using queryParameters (dataSpace)"
+        url : "/data-provider-type?dataSpace=4G"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id":1,"dataCategory": "CM_EXPORT","providerTypeId": "pvid_1"}]
+      - testcase : "Catalog_Service_03_GET verify successful operation of GET Dataspace Details using pathParams(id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using pathParameters (id)"
+        url : "/data-provider-type/1"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : {"id":1,"dataCategory": "CM_EXPORT","providerTypeId": "pvid_1"}
+      # DataSpace TestCases
+      - testcase : "Catalog_Service_01_GET - verify successful operation of GET All Dataspace Details"
+        doc : "This test is to verify successful GET operation in retrieving all the stored dataspace Details from DB(postgreSQL)"
+        url : "/data-space"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{ "name" : "4G" }]
+      - testcase : "Catalog_Service_02_GET - verify successful operation of GET Dataspace Details using queryParams(name)"
+        doc : "This test is to verify successful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using queryParameters (name)"
+        url : "/data-space?name=4G"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : { "name" : "4G" }
+      - testcase : "Catalog_Service_03_GET - verify successful operation of GET Dataspace Details using pathParams(id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored dataspace Details from DB(postgreSQL) using pathParameters (id)"
+        url : "/data-space/1"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : { "name" : "4G" }
+      # Get FileFormat Testcases
+      - testcase : "Catalog_Service_01_GET - verify successful operation of GET ALL FileFormat Details"
+        doc : "This test is to verify successful GET operation in retrieving the stored FileFormat Details from DB(postgreSQL)"
+        url : "/file-format"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id": 1}]
+      - testcase : "Catalog_Service_02_GET - verify successful operation of GET FileFormat Details using queryParams(dataProviderType providerTypeId AND dataSpace)"
+        doc : "This test is to verify successful GET operation in retrieving the stored FileFormat Details from DB(postgreSQL) using queryParameters (dataProviderType & dataSpace)"
+        url : "/file-format?dataProviderType=pvid_1&dataSpace=4G"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id": 1}]
+      - testcase : "Catalog_Service_03_GET - verify successful operation of GET FileFormat Details using PathVariable (id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored FileFormat Details from DB(postgreSQL) using pathvariable (id)"
+        url : "/file-format/1"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : {"id": 1}
+      - testcase : "Catalog_Service_04_GET - verify successful operation of GET FileFormat Details using queryParams(dataSpace)"
+        doc : "This test is to verify successful GET operation in retrieving the stored FileFormat Details from DB(postgreSQL) using queryParameters (dataSpace)"
+        url : "/file-format?dataSpace=4G"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id": 1}]
+      - testcase : "Catalog_Service_05_GET - verify successful operation of GET FileFormat Details using queryParams(dataCategory)"
+        doc : " This test is to verify successful GET operation in retrieving the stored FileFormat Details from DB(postgreSQL) using queryParameters (dataCategory)"
+        url : "/file-format?dataCategory=CM_EXPORT"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id": 1}]
+      - testcase : "Catalog_Service_06_GET - verify successful operation of GET FileFormat Details using queryParams(dataSpace AND dataCategory)"
+        doc : "This test is to verify successful GET operation in retrieving the stored FileFormat Details from DB(postgreSQL) using queryParameters (dataSpace and dataCategory)"
+        url : "/file-format?dataSpace=4G&dataCategory=CM_EXPORT"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id": 1}]
+      # Get Message Bus TestCases
+      - testcase : "Catalog_Service_01_GET - verify successful operation of GET ALL Message Bus Details"
+        doc : "This test is to verify successful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL)"
+        url : "/message-bus"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id":1,"name":"messageBus100"}]
+      - testcase : "Catalog_Service_02_GET - verify successful operation of GET Message Bus Details using queryParams(nameSpace & name)"
+        doc : "This test is to verify successful GET operation in retrieving the stored Message Bus Details from DB(postgreSQL) using queryParameters (nameSpace & name)"
+        url : "/message-bus?nameSpace=nameSpace1&name=messageBus100"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id":1,"name":"messageBus100"}]
+      - testcase : "Catalog_Service_03_GET - verify successful operation of GET Message Bus Details using PathVariable (id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored Message Bus Details  from DB(postgreSQL) using pathvariable (id)"
+        url : "/message-bus/1"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : {"id":1,"name":"messageBus100"}
+      # Get NotificationTopic Testcases
+      - testcase : Catalog_Service_01_GET - verify successful operation of GET ALL Notfication Topic Details""
+        doc : "This test is to verify successful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL)"
+        url : "/notification-topic"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : [{"id":1,"name":"topic1"}]
+      - testcase : "Catalog_Service_02_GET - verify successful operation of GET Notification Topic Details using queryParams(messageBusId & name)"
+        doc : "This test is to verify successful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) using queryParameters (messageBusId & name)"
+        url : "/notification-topic?name=topic1&messageBusId=1"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : {"id":1,"name":"topic1"}
+      - testcase : "Catalog_Service_03_GET - verify successful operation of GET Notification Topic Details using PathVariable (id)"
+        doc : "This test is to verify successful GET operation in retrieving the stored Notification Topic Details from DB(postgreSQL) using pathvariable (id)"
+        url : "/notification-topic/1"
+        expectedStatusCode : 200
+        restcall : get
+        expectedResponse : {"id":1,"name":"topic1"}

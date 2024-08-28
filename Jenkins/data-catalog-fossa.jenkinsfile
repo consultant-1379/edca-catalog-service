@@ -1,0 +1,134 @@
+pipeline {
+    agent {
+        node {
+            label 'E2c_Testing_Vapp'
+        }
+    }
+	environment {
+        FOSSA_CLI = true
+    }
+    stages {
+        stage('Prepare') {
+            steps {
+                sh 'uname -a;whoami;echo $PATH;groups'
+                //sh 'git clean -xdff'
+                sh 'git submodule sync'
+                sh 'git submodule update --init --recursive'
+                // Ensure that Bob has all of its dependencies.
+                sh 'bob/bob --help'
+            }
+        }
+        stage('Clean') {
+            steps {
+                sh 'bob/bob clean'
+            }
+        }
+        stage('Init') {
+            steps {
+                sh 'bob/bob init'
+            }
+        }
+		stage('Fossa stages') {
+			when {
+				expression { env.FOSSA_CLI.toBoolean() == true }
+			}
+			stages {
+			  	stage ('Fossa Init') {
+					steps {
+						withCredentials([usernamePassword(credentialsId: 'gerrit-user', usernameVariable: 'GERRIT_USERNAME', passwordVariable: 'GERRIT_PASSWORD')]) {
+							sh 'bob/bob fossa-init'
+						}
+					}
+				}
+				stage('Fossa Analyze') {
+					steps {
+						withCredentials([string(credentialsId: 'fossa-api-key-id', variable: 'FOSSA_API_KEY'),
+										usernamePassword(credentialsId: 'gerrit-user', usernameVariable: 'GERRIT_USERNAME', passwordVariable: 'GERRIT_PASSWORD')]){
+							sh 'bob/bob fossa-analyze'
+						}
+					}
+				}
+				stage('Fossa Scan Status Check') {
+					steps {
+						withCredentials([string(credentialsId: 'fossa-api-key-id', variable: 'FOSSA_API_KEY')]){
+							sh 'bob/bob fossa-scan-status-check'
+						}
+					}
+				}
+				stage('Fetch fossa report') {
+					steps {
+					catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+						withCredentials([string(credentialsId: 'fossa-api-key-id', variable: 'FOSSA_API_KEY')]){
+							sh 'bob/bob fetch-fossa-report-attribution'
+							sh 'bob/bob fetch-fossa-report-dependencies'
+						}
+						archiveArtifacts '*fossa-data-catalog-report.json'
+						}
+					}
+				}
+				stage('Dependency Update') {
+					steps {
+					catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+							sh 'bob/bob dependency-update'
+							archiveArtifacts 'ci-config/dependencies.yaml'
+							}
+					}
+				}
+				stage('Dependency Validate') {
+					steps {
+					catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+						sh 'bob/bob dependency-validate'
+						}
+					}
+				}
+				stage('Generate specific foss') {
+					steps {
+					catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+						sh 'bob/bob dependency-generate-specific-foss'
+						archiveArtifacts 'doc/*.docx'
+						}
+					}
+				}
+				stage('Update dependency with SVL info') {
+					steps {
+					catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+						sh 'bob/bob dependency-update-specific-foss'
+						archiveArtifacts 'ci-config/dependencies.yaml'
+						}
+					}
+				}
+				stage('Generate SVL doc') {
+					steps {
+					catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+						sh 'bob/bob generate-svl-doc'
+						archiveArtifacts 'doc/*.xlsm'
+						}
+					}
+				}
+				stage('License Agreement Generate') {
+					steps {
+						sh 'bob/bob license-agreement-generate'
+						archiveArtifacts 'doc/license.agreement.json'
+					}
+				}
+				stage('License Agreement Validate') {
+					steps {
+						sh 'bob/bob license-agreement-validate'
+					}
+				}
+				stage('License Agreement doc generate') {
+					steps {
+						sh 'bob/bob license-agreement-doc-generate'
+						archiveArtifacts 'doc/license-agreement-doc.md'
+					}
+				}
+				
+			}
+		}
+    }
+    /*post {
+        always {
+            cleanWs()
+       }
+    }*/
+}

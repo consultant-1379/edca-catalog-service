@@ -1,0 +1,165 @@
+pipeline {
+    agent {
+        node {
+            label 'E2c_Testing_Vapp'
+        }
+    }
+	environment {
+        FOSSA_CLI = true
+    }
+    stages {
+        stage('Prepare') {
+            steps {
+                sh 'uname -a;whoami;echo $PATH;groups'
+                //sh 'git clean -xdff'
+                sh 'git submodule sync'
+                sh 'git submodule update --init --recursive'
+                // Ensure that Bob has all of its dependencies.
+                sh 'bob/bob --help'
+            }
+        }
+        stage('Clean') {
+            steps {
+                sh 'bob/bob clean'
+            }
+        }
+        stage('Init') {
+            steps {
+                sh 'bob/bob init'
+            }
+        }
+        stage('Lint') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'bob/bob lint:helm lint:helm-chart-check'
+                }
+            }
+        }
+        stage('BTH Lint') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'bob/bob bth-linter'
+                }
+            }
+        }
+        stage('Unit') {
+            steps {
+                sh 'mvn -f pom.xml clean jacoco:prepare-agent install jacoco:report -Dspring.profiles.active=unit -Ddockerfile.skip -Dserver.port=9095'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn -f pom.xml package -DskipTests=true -Ddockerfile.skip'
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube enterprise 79') {
+                    withMaven { // This body required for Quality Gate step to recognize the task ID for SQ Analysis
+                        sh "bob/bob sonar"
+                    }
+                }
+            }
+        }
+        stage("QualityGate Check") {
+            steps {
+                withSonarQubeEnv('sonarqube enterprise 79') {
+                    script {
+                        timeout(time: 10, unit: 'MINUTES') {
+                            getQualityGate()
+                        }
+                    }
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'bob/bob image'
+            }
+        }
+        stage('Package Helm Chart') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-artifactory-user', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD'),
+                                string(credentialsId: 'artifactory-api-token-id', variable: 'HELM_TOKEN')]) {
+                    //To fix docker login issue, below line needs to be enabled
+                    sh 'docker login armdocker.rnd.ericsson.se --username $DOCKER_USERNAME --password $DOCKER_PASSWORD'
+                    sh 'bob/bob package'
+                }
+            }
+        }
+        stage('Helm Install') {
+            steps {
+                sh 'bob/bob delete-namespace'
+                sh 'bob/bob create-namespace'
+                sh 'bob/bob helm-install'
+              }
+        }
+         // Catalo Service priority 1 Modified Test Cases to be executed
+        stage('Catalog P1 Testing') {
+            //when { expression { false } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh 'bob/bob deploy-robot'
+                sh 'bob/bob P1-Execution'
+                }
+           }
+        }
+        // Catalog Service priority 2 Test Cases to be executed
+        stage('Catalog P2 Testing') {
+            //when { expression { false } }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                sh 'bob/bob P2-Execution'
+                }
+           }
+        }
+        stage('Publish Local Internal Helm Chart') {
+            steps {
+                withCredentials([string(credentialsId: 'artifactory-api-token-id', variable: 'HELM_TOKEN')]) {
+                    sh 'bob/bob publish-internal'
+                }
+            }
+        }
+        stage('Helm-Delete'){
+            steps {
+               sh 'bob/bob delete-namespace'
+               sh 'bob/bob create-namespace'
+              }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts '.bob/design-*.*'
+			archiveArtifacts '.bob/bth-linter-data-catalog.html'
+            cleanWs()
+       }
+    }
+}
+
+def getQualityGate() {
+    // Wait for SonarQube Analysis is done and Quality Gate is pushed back
+    def qualityGate = waitForQualityGate()
+    println(qualityGate)
+    // If Analysis file exists, parse the Dashboard URL
+    if (fileExists(file: 'target/sonar/report-task.txt')) {
+        sh 'cat target/sonar/report-task.txt'
+        def props = readProperties file: 'target/sonar/report-task.txt'
+        env.DASHBOARD_URL = props['dashboardUrl']
+    }
+    if (qualityGate.status != 'OK') { // If Quality Gate Failed
+        if (env.GERRIT_CHANGE_NUMBER) {
+            env.SQ_MESSAGE = "'" + "SonarQube Quality Gate Failed: ${DASHBOARD_URL}" + "'"
+            sh '''
+               ssh -p 29418 lciadm100@gerrit.ericsson.se gerrit review --label 'SQ-Quality-Gate=-1'  \
+               --message ${SQ_MESSAGE} --project $GERRIT_PROJECT $GERRIT_PATCHSET_REVISION
+               '''
+            error "Pipeline aborted due to quality gate failure!\n Report: ${env.DASHBOARD_URL}"
+        }
+    } else if (env.GERRIT_CHANGE_NUMBER) { // If Quality Gate Passed
+        env.SQ_MESSAGE = "'" + "SonarQube Quality Gate Passed: ${DASHBOARD_URL}" + "'"
+        sh '''
+           ssh -p 29418 lciadm100@gerrit.ericsson.se gerrit review --label 'SQ-Quality-Gate=+1'  \
+           --message ${SQ_MESSAGE} --project $GERRIT_PROJECT $GERRIT_PATCHSET_REVISION
+           '''
+    }
+}

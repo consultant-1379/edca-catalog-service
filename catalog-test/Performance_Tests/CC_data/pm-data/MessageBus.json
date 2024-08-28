@@ -1,0 +1,8 @@
+{
+"name":"message-bus14",
+"clusterName":"hoff135",
+"nameSpace":"fem2s11-edca-integration-staging-precodereview",
+"accessEndpoints":["eric-oss-dmaap-kafka.fem2s11-edca-integration-staging-precodereview:9092"]
+}
+
+

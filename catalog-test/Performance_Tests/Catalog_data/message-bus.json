@@ -1,0 +1,6 @@
+{
+    "name": "messageBus",
+    "clusterName": "KaaS",
+    "nameSpace": "Sunshine-harii",
+    "accessEndpoints": ["eric-oss-dmaap-kafka.sunshine-harii:9092"]
+}

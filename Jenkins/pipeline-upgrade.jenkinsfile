@@ -1,0 +1,89 @@
+pipeline {
+    agent {
+        node {
+            label 'E2c_Testing_Vapp'
+        }
+    }
+    stages {
+        stage('Prepare') {
+            steps {
+                /*
+                   Snippet generated from a manual configuration based on the ADP howto:
+                   https://confluence.lmera.ericsson.se/pages/viewpage.action?spaceKey=ACD&title=How+to+checkout+sub-modules+in+Jenkins+Pipeline
+                   More about snippet generation:
+                   https://www.jenkins.io/doc/book/pipeline/getting-started/#snippet-generator
+                   ${YOUR_JENKINS_URL}/pipeline-syntax
+                */
+                sh 'uname -a;whoami;echo $PATH;groups'
+                sh 'git clean -xdff'
+                sh 'git submodule sync'
+                sh 'git submodule update --init --recursive'
+                // Ensure that Bob has all of its dependencies.
+                /* End of generated snippet */
+                sh 'bob/bob --help'
+            }
+        }
+        stage('Clean') {
+            steps {
+                sh 'bob/bob clean'
+            }
+        }
+        stage('Init') {
+            steps {
+                sh 'bob/bob init'
+                //archiveArtifacts 'artifact.properties'
+            }
+        }
+       stage('Helm-Upgrade') {
+            steps {
+                sh 'bob/bob delete-namespace'
+                sh 'bob/bob create-namespace'
+                sh 'bob/bob helm-upgrade'
+              }
+        }
+        // Catalo Service priority 1 Test Cases to be executed
+        stage('Catalog P1 Testing') {
+            //when { expression { false } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh 'bob/bob deploy-robot'
+                sh 'bob/bob P1-Execution'
+                }
+           }
+        }
+        // Catalog Service priority 2 Test Cases to be executed
+        stage('Catalog P2 Testing') {
+            //when { expression { false } }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                sh 'bob/bob P2-Execution'
+                }
+           }
+        }
+        stage('Helm-Delete') {
+            steps {
+                sh 'bob/bob delete-namespace'
+                sh 'bob/bob create-namespace'
+              }
+        }
+    }
+    post {
+         always {
+                script {
+                        step(
+                              [
+                                 $class              : 'RobotPublisher',
+                                 outputPath          : '/home/lciadm100/jenkins/workspace/edca-catalog-service-upgrade/catalog-test/results',
+                                 outputFileName      : 'final_output.xml',
+                                 reportFileName      : 'report.html',
+                                 logFileName         : 'log.html',
+                                 passThreshold       : 90,
+                                 unstableThreshold   : 60,
+                                 disableArchiveOutput: false,
+                                 otherFiles          : "**/*.png,**/*.jpg",
+                              ]
+                            )
+                       }
+                  }
+    }
+}

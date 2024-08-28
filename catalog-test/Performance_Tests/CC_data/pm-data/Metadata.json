@@ -1,0 +1,15 @@
+{
+  "topicName": "pm-data",
+  "dataCategory": "5G",
+  "dataSubCategory": [
+    "CM_EXPORT"
+  ],
+  "sourceType": [
+    "pvid_3"
+  ],
+  "topicEncoding": "JSON",
+  "topicSpecRef": "specref1",
+  "accessEndpoints": [
+    "eric-oss-dmaap-kafka.fem2s11-edca-integration-staging-precodereview:9092"
+  ]
+}

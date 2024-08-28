@@ -1,0 +1,5 @@
+{
+    "collectorId": "d65f5310-1593-4ae1-9f1d-ab9104180f01",
+    "controlEndpoint": "http://8.8.8.8:9090/end_point",
+    "name": "dc_1"
+}

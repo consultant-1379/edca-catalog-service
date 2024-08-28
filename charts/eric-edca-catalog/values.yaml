@@ -1,0 +1,68 @@
+# Create a user defined annotation (DR-D1121-068)
+labels: {}
+
+global:
+  pullSecret:
+  registry:
+    url:
+  timezone: UTC
+  internalIPFamily:
+
+replicaCount: 2
+
+affinity:
+  podAntiAffinity: "soft"
+
+fullnameOverride:
+
+updateStrategy:
+ type: RollingUpdate
+ rollingUpdate:
+   maxSurge: 1
+   maxUnavailable: 1
+
+imageCredentials:
+  registry:
+    url:
+  repoPath: proj-edca-catalog-service
+  pullPolicy: IfNotPresent
+  pullSecret:
+
+images:
+  eric-edca-catalog:
+    name: eric-edca-catalog
+    tag: VERSION
+
+logging:
+  format:
+    json: true
+
+service:
+  type: ClusterIP
+  port: 9590
+  shutdown:
+    graceful:
+      timeout: 20
+
+database:
+  service: eric-edca-catalog-db
+  credentials:
+    kubernetesSecretName: ""
+    keyForUserId: pguserid
+    keyForUserPw: pgpasswd
+  schema: "catalog"
+  port: "5432"
+
+resources:
+  catalog:
+    requests:
+      ephemeral-storage: 5Gi
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      ephemeral-storage: 15Gi
+      memory: 1Gi
+      cpu: 1
+
+podDisruptionBudget:
+  minAvailable : 50%

@@ -1,0 +1,6 @@
+{
+"messageBusId":31,   
+"name":"pm-data",  
+"encoding":"JSON"  ,
+"specificationReference": "specref1"
+}

@@ -1,0 +1,6 @@
+database:
+  credentials:
+    kubernetesSecretName: eric-edca-user-creds
+
+ingress:
+  enabled: true

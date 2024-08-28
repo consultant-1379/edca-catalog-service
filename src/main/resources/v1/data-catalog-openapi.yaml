@@ -1,0 +1,1822 @@
+openapi: 3.0.1
+info:
+  title: Data Catalog
+  description: API for Data Catalog
+  termsOfService: https://www.ericsson.com/en/legal
+  contact:
+    email: PDLEAMZEUG@pdl.internal.ericsson.com
+  license:
+    name: COPYRIGHT Ericsson "201"9
+    url: https://www.ericsson.com/en/legal
+  version: 1.0.0
+servers:
+- url: //localhost:8080/catalog
+tags:
+- name: /v1/bulk-data-repository
+  description: Bulk Data Repository Controller
+- name: /v1/data-collector
+  description: Data Collector Controller
+- name: /v1/data-provider-type
+  description: Data Provider Type Controller
+- name: /v1/data-space
+  description: Dataspace Controller
+- name: /v1/file-format
+  description: File Format Controller
+- name: /v1/message-bus
+  description: Message Bus Controller
+- name: /v1/message-data-topic
+  description: Message Data Topic Controller
+- name: /v1/message-schema
+  description: Message Schema Controller
+- name: /v1/message-status-topic
+  description: Message Status Topic Controller
+- name: /v1/notification-topic
+  description: Notification Topic Controller
+paths:
+  /v1/bulk-data-repository:
+    get:
+      tags:
+      - /v1/bulk-data-repository
+      summary: get all BulkDataRepository details or filter by QueryParams
+      operationId: queryAllBDRUsingGET
+      parameters:
+      - name: name
+        in: query
+        description: name value of the Bulk data repository
+        schema:
+          type: string
+      - name: nameSpace
+        in: query
+        description: nameSpace value of the Bulk data repository
+        schema:
+          type: string
+      responses:
+        "200":
+          description: show BulkDataRepository details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BulkDataRepositoryDTO'
+        "400":
+          description: If Parameter values(nameSpace/name) is missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If BulkDataRepository detail is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/bulk-data-repository
+      summary: create BulkDataRepositoryDetails
+      operationId: registerBDRUsingPOST
+      requestBody:
+        description: BulkDataRepository
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkDataRepositoryDTO'
+        required: true
+      responses:
+        "201":
+          description: created BulkDataRepository details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkDataRepositoryDTO'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: BulkDataRepository details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: BulkDataRepository model
+  /v1/bulk-data-repository/{id}:
+    get:
+      tags:
+      - /v1/bulk-data-repository
+      summary: get BulkDataRepositoryDetails by id
+      operationId: queryBDRByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies BulkDataRepository
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get BulkDataRepositoryDetails by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkDataRepositoryDTO'
+        "400":
+          description: If Parameter values(nameSpace/name) is missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If BulkDataRepository detail is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/data-collector:
+    post:
+      tags:
+      - /v1/data-collector
+      summary: create DataCollector details
+      operationId: registerDataCollectorUsingPOST
+      requestBody:
+        description: dataCollectorDto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataCollectorDto'
+        required: true
+      responses:
+        "201":
+          description: created DataCollector details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataCollectorDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: DataCollector details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: dataCollectorDto
+  /v1/data-provider-type:
+    get:
+      tags:
+      - /v1/data-provider-type
+      summary: get all dataProviderType details or filter by QueryParams
+      operationId: queryAllDataProviderTypesByQueryParamsUsingGET
+      parameters:
+      - name: dataspace
+        in: query
+        description: Dataspace to which the dataProviderType is associated
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get dataProviderType details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataProviderTypeDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: dataProviderType details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/data-provider-type
+      summary: create DataProviderType details
+      operationId: registerDataProviderTypeUsingPOST
+      requestBody:
+        description: dataProviderTypeDto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataProviderTypeDto'
+        required: true
+      responses:
+        "201":
+          description: created DataProviderType details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProviderTypeDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: DataProviderType details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: dataProviderTypeDto
+  /v1/data-provider-type/{id}:
+    get:
+      tags:
+      - /v1/data-provider-type
+      summary: get dataProviderType details by id
+      operationId: queryDataProviderTypeByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies dataProviderType
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get dataProviderType details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProviderTypeDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: dataProviderType details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/data-space:
+    get:
+      tags:
+      - /v1/data-space
+      summary: get all dataspace details or filter by QueryParams
+      operationId: queryDataspaceByParamsUsingGET
+      parameters:
+      - name: name
+        in: query
+        description: name of a dataspace
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get dataspace details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataSpaceDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: dataspace details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/data-space
+      summary: create dataspace details
+      operationId: registerDataspaceUsingPOST
+      requestBody:
+        description: dataspace
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataSpaceDto'
+        required: true
+      responses:
+        "201":
+          description: created dataspace details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataSpaceDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: dataspace details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: dataspace model
+  /v1/data-space/{id}:
+    get:
+      tags:
+      - /v1/data-space
+      summary: get dataspace details by id
+      operationId: queryDataspaceByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies dataspace
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get dataspace details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataSpaceDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: dataspace details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/file-format:
+    get:
+      tags:
+      - /v1/file-format
+      summary: get all fileformat details or filter by QueryParams
+      description: "Search Criteria: \r\n\r\nAll file formats for a dataspace and/or\
+        \ data category (e.g. all stats files for 5G, all stats files, all 5G file\
+        \ formats)\r\nAll file formats for a dataspace and a data provider type (e.g.\
+        \ 5G CTR)"
+      operationId: queryAllFileFormatByParamsUsingGET
+      parameters:
+      - name: dataCategory
+        in: query
+        description: DataCategory to which the dataProviderType is associated
+        schema:
+          type: string
+      - name: dataProvider
+        in: query
+        description: DataProviderType Identifier to which the dataSpace is associated
+        schema:
+          type: string
+      - name: dataSpace
+        in: query
+        description: Dataspace name to which the dataProviderType is associated
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get FileFormat details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FileFormatDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: FileFormat details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/file-format
+      summary: create FileFormat details
+      operationId: registerFileFormatUsingPOST
+      requestBody:
+        description: fileFormatDto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileFormatDto'
+        required: true
+      responses:
+        "201":
+          description: created FileFormat details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileFormatDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: FileFormat details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: fileFormatDto
+  /v1/file-format/{id}:
+    get:
+      tags:
+      - /v1/file-format
+      summary: get fileFormat details by id
+      operationId: queryFileFormatByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies fileFormat
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get fileFormat details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileFormatDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: fileFormat details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/message-bus:
+    get:
+      tags:
+      - /v1/message-bus
+      summary: get all Message Bus details or filter by QueryParams
+      operationId: getMessageBusUsingGET_1
+      parameters:
+      - name: name
+        in: query
+        description: name value of the Message Bus
+        schema:
+          type: string
+      - name: nameSpace
+        in: query
+        description: nameSpace value of the Message bus
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get Message Bus details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageBusDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If Message Bus details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/message-bus
+      summary: create Message Bus details
+      operationId: createMessageBusUsingPOST
+      requestBody:
+        description: MessageBus
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageBusDto'
+        required: true
+      responses:
+        "201":
+          description: created Message Bus details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBusDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: Message Bus details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: MessageBus model
+  /v1/message-bus/{id}:
+    get:
+      tags:
+      - /v1/message-bus
+      summary: get Message Bus by Id
+      operationId: getMessageBusUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies Message bus
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get Message Bus details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBusDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If Message Bus details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/message-data-topic:
+    get:
+      tags:
+      - /v1/message-data-topic
+      summary: get all MessageDataTopic details or filter by QueryParams
+      operationId: getAllMessageDataTopicsUsingGET
+      parameters:
+      - name: messageBusId
+        in: query
+        description: messageBusId related with MessageDataTopic
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: name of the MessageDataTopic
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get MessageDataTopic details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageDataTopicDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If MessageDataTopic details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/message-data-topic
+      summary: create MessageDataTopic details
+      operationId: registerMessageDataTopicUsingPOST
+      requestBody:
+        description: MessageDataTopic
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageDataTopicDto'
+        required: true
+      responses:
+        "201":
+          description: created MessageDataTopic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDataTopicDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: MessageDataTopic details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: MessageDataTopic model
+  /v1/message-data-topic/{id}:
+    get:
+      tags:
+      - /v1/message-data-topic
+      summary: get MessageDataTopic by Id
+      operationId: getMessageDataTopicByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies MessageDataTopic
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get MessageDataTopic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDataTopicDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If MessageDataTopic details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/message-schema:
+    get:
+      tags:
+      - /v1/message-schema
+      summary: get all messageSchema details or filter by QueryParams
+      operationId: queryAllMessageSchemaByParamsUsingGET
+      parameters:
+      - name: dataCategory
+        in: query
+        description: DataCategory to which the dataProviderType is associated
+        schema:
+          type: string
+      - name: dataProvider
+        in: query
+        description: DataProviderType Identifier to which the dataSpace is associated
+        schema:
+          type: string
+      - name: dataSpace
+        in: query
+        description: Dataspace name to which the dataProviderType is associated
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get MessageSchema details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageSchema'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: MessageSchema details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/message-schema
+      summary: create MessageSchema details
+      operationId: registerMessageSchemaUsingPOST
+      requestBody:
+        description: messageSchemaDto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageSchemaDto'
+        required: true
+      responses:
+        "201":
+          description: created MessageSchema details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageSchemaDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: MessageSchema details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: messageSchemaDto
+  /v1/message-schema/{id}:
+    get:
+      tags:
+      - /v1/message-schema
+      summary: get messageSchema details by id
+      operationId: queryMessageSchemaByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies messageSchema
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get messageSchema details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageSchemaDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: messageSchema details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/message-status-topic:
+    get:
+      tags:
+      - /v1/message-status-topic
+      summary: get all MessageStatusTopic details or filter by QueryParams
+      operationId: getAllMessageStatusTopicsUsingGET
+      parameters:
+      - name: messageBusId
+        in: query
+        description: messageBusId related with MessageStatusTopic
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: name of the MessageStatusTopic
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get MessageStatusTopic details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageStatusTopicDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If MessageStatusTopic details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/message-status-topic
+      summary: create MessageStatusTopic details
+      operationId: registerMessageStatusTopicUsingPOST
+      requestBody:
+        description: MessageStatusTopic
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageStatusTopicDto'
+        required: true
+      responses:
+        "201":
+          description: created MessageStatusTopic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageStatusTopicDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: MessageStatusTopic details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: MessageStatusTopic model
+  /v1/message-status-topic/{id}:
+    get:
+      tags:
+      - /v1/message-status-topic
+      summary: get MessageStatusTopic by Id
+      operationId: getMessageStatusTopicByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies MessageStatusTopic
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get MessageStatusTopic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageStatusTopicDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If MessageStatusTopic details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+  /v1/notification-topic:
+    get:
+      tags:
+      - /v1/notification-topic
+      summary: get all NotificationTopic details or filter by QueryParams
+      operationId: getAllNotificationTopicsUsingGET
+      parameters:
+      - name: messageBusId
+        in: query
+        description: messageBusId related with NotificationTopic
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: name of the NotificationTopic
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get NotificationTopic details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationTopicDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If NotificationTopic details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+    post:
+      tags:
+      - /v1/notification-topic
+      summary: create NotificationTopic details
+      operationId: registerNotificationTopicUsingPOST
+      requestBody:
+        description: NotificationTopic
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationTopicDto'
+        required: true
+      responses:
+        "201":
+          description: created NotificationTopic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTopicDto'
+        "400":
+          description: Bad Request in values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description: NotificationTopic details exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+      x-codegen-request-body-name: NotificationTopic model
+  /v1/notification-topic/{id}:
+    get:
+      tags:
+      - /v1/notification-topic
+      summary: get NotificationTopic by Id
+      operationId: getNotificationTopicByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id uniquely identifies NotificationTopic
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get NotificationTopic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTopicDto'
+        "400":
+          description: Bad Request in request values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: If NotificationTopic details not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+      deprecated: false
+components:
+  schemas:
+    BulkDataRepository:
+      title: BulkDataRepository
+      type: object
+      properties:
+        accessEndpoints:
+          type: array
+          items:
+            type: string
+        clusterName:
+          type: string
+        fileFormat:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileFormat'
+        fileFormatIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        nameSpace:
+          type: string
+    BulkDataRepositoryDTO:
+      title: BulkDataRepositoryDTO
+      type: object
+      properties:
+        accessEndpoints:
+          type: array
+          items:
+            type: string
+        clusterName:
+          type: string
+        fileFormatIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        nameSpace:
+          type: string
+    CatalogResponse:
+      title: CatalogResponse
+      type: object
+      properties:
+        message:
+          type: string
+        path:
+          type: string
+        timeStamp:
+          type: string
+          format: date-time
+    DataCollector:
+      title: DataCollector
+      type: object
+      properties:
+        collectorId:
+          type: string
+        controlEndpoint:
+          $ref: '#/components/schemas/URL'
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        new:
+          type: boolean
+    DataCollectorDto:
+      title: DataCollectorDto
+      type: object
+      properties:
+        collectorId:
+          type: string
+          format: uuid
+        controlEndpoint:
+          $ref: '#/components/schemas/URL'
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+    DataProviderType:
+      title: DataProviderType
+      type: object
+      properties:
+        dataCategory:
+          type: string
+          enum:
+          - CM_NOTIFICATIONS
+          - PM_STATS
+          - FM_NOTIFICATIONS
+          - PM_EVENTS
+          - CM_EXPORT
+        dataSpace:
+          $ref: '#/components/schemas/DataSpace'
+        dataSpaceId:
+          type: integer
+          format: int32
+        fileFormatIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        fileFormats:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileFormat'
+        id:
+          type: integer
+          format: int32
+        messageSchemaIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageSchemas:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageSchema'
+        new:
+          type: boolean
+        providerTypeId:
+          type: string
+        providerVersion:
+          type: string
+    DataProviderTypeDto:
+      title: DataProviderTypeDto
+      type: object
+      properties:
+        dataCategory:
+          type: string
+          enum:
+          - CM_NOTIFICATIONS
+          - PM_STATS
+          - FM_NOTIFICATIONS
+          - PM_EVENTS
+          - CM_EXPORT
+        dataSpace:
+          $ref: '#/components/schemas/DataSpaceDto'
+        dataSpaceId:
+          type: integer
+          format: int32
+        fileFormatIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        id:
+          type: integer
+          format: int32
+        messageSchemaIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageSchemaIdsIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        providerTypeId:
+          type: string
+        providerVersion:
+          type: string
+    DataSpace:
+      title: DataSpace
+      type: object
+      properties:
+        dataProviderTypeIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        dataProviderTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataProviderType'
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        new:
+          type: boolean
+    DataSpaceDto:
+      title: DataSpaceDto
+      type: object
+      properties:
+        dataProviderTypeIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+    FileFormat:
+      title: FileFormat
+      type: object
+      properties:
+        bulkDataRepository:
+          $ref: '#/components/schemas/BulkDataRepository'
+        bulkDataRepositoryId:
+          type: integer
+          format: int32
+        dataCollector:
+          $ref: '#/components/schemas/DataCollector'
+        dataEncoding:
+          type: string
+          enum:
+          - JSON
+          - CSV
+          - XML
+          - PARQUET
+        dataProviderType:
+          $ref: '#/components/schemas/DataProviderType'
+        id:
+          type: integer
+          format: int32
+        new:
+          type: boolean
+        notificationTopic:
+          $ref: '#/components/schemas/NotificationTopic'
+        reportOutputPeriodList:
+          type: array
+          items:
+            type: integer
+            format: int32
+        specificationReference:
+          type: string
+    FileFormatDto:
+      title: FileFormatDto
+      type: object
+      properties:
+        bulkDataRepositoryId:
+          type: integer
+          format: int32
+        dataCollectorId:
+          type: string
+          format: uuid
+        dataEncoding:
+          type: string
+          enum:
+          - JSON
+          - CSV
+          - XML
+          - PARQUET
+        dataProviderTypeId:
+          type: integer
+          format: int32
+        id:
+          type: integer
+          format: int32
+        notificationTopicId:
+          type: integer
+          format: int32
+        reportOutputPeriodList:
+          type: array
+          items:
+            type: integer
+            format: int32
+        specificationReference:
+          type: string
+    MessageBus:
+      title: MessageBus
+      type: object
+      properties:
+        accessEndpoints:
+          type: array
+          items:
+            type: string
+        clusterName:
+          type: string
+        id:
+          type: integer
+          format: int32
+        messageDataTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageDataTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageDataTopic'
+        messageStatusTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageStatusTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageStatusTopic'
+        name:
+          type: string
+        nameSpace:
+          type: string
+        notificationTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        notificationTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationTopic'
+    MessageBusDto:
+      title: MessageBusDto
+      type: object
+      properties:
+        accessEndpoints:
+          type: array
+          items:
+            type: string
+        clusterName:
+          type: string
+        id:
+          type: integer
+          format: int32
+        messageDataTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageStatusTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        name:
+          type: string
+        nameSpace:
+          type: string
+        notificationTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+    MessageDataTopic:
+      title: MessageDataTopic
+      type: object
+      properties:
+        encoding:
+          type: string
+          enum:
+          - JSON
+          - AVRO
+          - PROTOBUF
+        id:
+          type: integer
+          format: int32
+        messageBus:
+          $ref: '#/components/schemas/MessageBus'
+        messageBusId:
+          type: integer
+          format: int32
+        messageSchemaIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageSchemas:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageSchema'
+        messageStatusTopic:
+          $ref: '#/components/schemas/MessageStatusTopic'
+        messageStatusTopicId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        new:
+          type: boolean
+    MessageDataTopicDto:
+      title: MessageDataTopicDto
+      type: object
+      properties:
+        encoding:
+          type: string
+          enum:
+          - JSON
+          - AVRO
+          - PROTOBUF
+        id:
+          type: integer
+          format: int32
+        messageBus:
+          $ref: '#/components/schemas/MessageBusDto'
+        messageBusId:
+          type: integer
+          format: int32
+        messageSchemaIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageStatusTopic:
+          $ref: '#/components/schemas/MessageStatusTopicDto'
+        messageStatusTopicId:
+          type: integer
+          format: int32
+        name:
+          type: string
+    MessageSchema:
+      title: MessageSchema
+      type: object
+      properties:
+        dataCollector:
+          $ref: '#/components/schemas/DataCollector'
+        dataProviderType:
+          $ref: '#/components/schemas/DataProviderType'
+        dataTopic:
+          $ref: '#/components/schemas/MessageDataTopic'
+        dataTopicId:
+          type: integer
+          format: int32
+        id:
+          type: integer
+          format: int32
+        new:
+          type: boolean
+        specificationReference:
+          type: string
+    MessageSchemaDto:
+      title: MessageSchemaDto
+      type: object
+      properties:
+        dataCollectorId:
+          type: string
+          format: uuid
+        dataProviderTypeId:
+          type: integer
+          format: int32
+        id:
+          type: integer
+          format: int32
+        messageDataTopicId:
+          type: integer
+          format: int32
+        specificationReference:
+          type: string
+    MessageStatusTopic:
+      title: MessageStatusTopic
+      type: object
+      properties:
+        encoding:
+          type: string
+          enum:
+          - JSON
+          - AVRO
+          - PROTOBUF
+        id:
+          type: integer
+          format: int32
+        messageBus:
+          $ref: '#/components/schemas/MessageBus'
+        messageBusId:
+          type: integer
+          format: int32
+        messageDataTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageDataTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageDataTopic'
+        name:
+          type: string
+        new:
+          type: boolean
+        specificationReference:
+          type: string
+    MessageStatusTopicDto:
+      title: MessageStatusTopicDto
+      type: object
+      properties:
+        encoding:
+          type: string
+          enum:
+          - JSON
+          - AVRO
+          - PROTOBUF
+        id:
+          type: integer
+          format: int32
+        messageBus:
+          $ref: '#/components/schemas/MessageBusDto'
+        messageBusId:
+          type: integer
+          format: int32
+        messageDataTopicIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        name:
+          type: string
+        specificationReference:
+          type: string
+    NotificationTopic:
+      title: NotificationTopic
+      type: object
+      properties:
+        encoding:
+          type: string
+          enum:
+          - JSON
+          - AVRO
+          - PROTOBUF
+        fileFormatIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        fileFormats:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileFormat'
+        id:
+          type: integer
+          format: int32
+        messageBus:
+          $ref: '#/components/schemas/MessageBus'
+        messageBusId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        new:
+          type: boolean
+        specificationReference:
+          type: string
+    NotificationTopicDto:
+      title: NotificationTopicDto
+      type: object
+      properties:
+        encoding:
+          type: string
+          enum:
+          - JSON
+          - AVRO
+          - PROTOBUF
+        fileFormatIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        id:
+          type: integer
+          format: int32
+        messageBus:
+          $ref: '#/components/schemas/MessageBusDto'
+        messageBusId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        specificationReference:
+          type: string
+    URL:
+      title: URL
+      type: object
+      properties:
+        authority:
+          type: string
+        content:
+          type: object
+          properties: {}
+        defaultPort:
+          type: integer
+          format: int32
+        file:
+          type: string
+        host:
+          type: string
+        path:
+          type: string
+        port:
+          type: integer
+          format: int32
+        protocol:
+          type: string
+        query:
+          type: string
+        ref:
+          type: string
+        userInfo:
+          type: string
+    URLStreamHandler:
+      title: URLStreamHandler
+      type: object

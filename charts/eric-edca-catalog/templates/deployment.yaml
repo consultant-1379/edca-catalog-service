@@ -1,0 +1,150 @@
+#
+# COPYRIGHT Ericsson 2020
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eric-edca-catalog.fullname" . }}
+  labels:
+{{- include "eric-edca-catalog.labels" . | nindent 4 }}
+{{- include "eric-edca-catalog.user-labels" . | indent 4 }}
+  annotations:
+{{- include "eric-edca-catalog.product-info" . | nindent 4 }}
+{{- include "eric-edca-catalog.prometheus" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eric-edca-catalog.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: {{ .Values.updateStrategy.type }}
+    {{- if and (eq .Values.updateStrategy.type "RollingUpdate") .Values.updateStrategy.rollingUpdate }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.updateStrategy.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .Values.updateStrategy.rollingUpdate.maxSurge }}
+    {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "eric-edca-catalog.name" . }}
+        app.kubernetes.io/name: {{ include "eric-edca-catalog.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/version: {{ include "eric-edca-catalog.version" . }}
+      annotations:
+ {{- include "eric-edca-catalog.product-info" . | nindent 8 }}
+ {{- include "eric-edca-catalog.prometheus" . | nindent 8 }}
+    spec:
+      {{- if eq .Values.affinity.podAntiAffinity "hard" }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app.kubernetes.io/name"
+                    operator: In
+                    values:
+                    - {{ include "eric-edca-catalog.fullname" . }}
+              topologyKey: "kubernetes.io/hostname"
+      {{- else }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: "app.kubernetes.io/name"
+                      operator: In
+                      values:
+                        - {{ include "eric-edca-catalog.fullname" . }}
+                topologyKey: "kubernetes.io/hostname"
+      {{- end }}
+      serviceAccountName: {{ include "eric-edca-catalog.fullname" . }}-sa
+      serviceAccount: ""
+      terminationGracePeriodSeconds: {{ .Values.service.shutdown.graceful.timeout }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ template "eric-edca-catalog.registryUrl" . }}/{{ .Values.imageCredentials.repoPath }}/{{ index .Values "images" "eric-edca-catalog" "name" }}:{{ index .Values "images" "eric-edca-catalog" "tag" }}"
+          imagePullPolicy: {{ .Values.imageCredentials.pullPolicy }}
+          ports:
+            - name: http-port
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1100
+            capabilities:
+              drop:
+                - all
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh" , "-c" , "sleep {{ .Values.service.shutdown.graceful.timeout }}s"]
+          env:
+          - name: TZ
+            value: {{ .Values.global.timezone }}
+          - name: SERVICE_ID
+            value: {{ .Chart.Name }}
+          {{- if (not .Values.logging.format.json) }}
+          - name: LOGBACK_CONFIG_FILE
+            value: "classpath:custom-logback-plain-text.xml"
+          {{- end }}
+          - name: SERVER_PORT
+            value: "{{ .Values.service.port }}"
+          - name: SPRING_DATASOURCE_URL
+            value: "jdbc:postgresql://{{ index .Values "database" "service" }}.{{ .Release.Namespace }}:{{ index .Values "database" "port" }}/{{ index .Values "database" "schema" }}"
+          - name: SPRING_DATASOURCE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.database.credentials.kubernetesSecretName }}
+                key: {{ .Values.database.credentials.keyForUserId }}
+          - name:  SPRING_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.database.credentials.kubernetesSecretName }}
+                key: {{ .Values.database.credentials.keyForUserPw }}
+          - name: GRACEFUL_SHUTDOWN_TIMEOUT
+            value: {{ .Values.service.shutdown.graceful.timeout }}s
+          resources:
+            {{- toYaml .Values.resources.catalog | nindent 12 }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /catalog/actuator/health
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+      {{- if include "eric-edca-catalog.pullSecret" . }}
+      imagePullSecrets:
+        - name: {{ template "eric-edca-catalog.pullSecret" . }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
